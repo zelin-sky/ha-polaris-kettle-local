@@ -20,14 +20,14 @@ PLATFORMS: list[Platform] = [Platform.WATER_HEATER, Platform.SWITCH, Platform.LI
 
 async def async_setup(hass: HomeAssistant, config: dict) -> bool:
     """Set up the Polaris Kettle component."""
-    # Предварительно настраиваем discovery с shared Zeroconf
+    # Попередньо налаштовуємо discovery зі спільним Zeroconf
     try:
         from homeassistant.components.zeroconf import async_get_instance
         zc = await async_get_instance(hass)
         discovery = SyncleoDiscovery.get_instance()
         discovery.set_zeroconf_instance(zc)
         
-        # Запускаем discovery заранее
+        # Запускаємо discovery заздалегідь
         await hass.async_add_executor_job(discovery.start_discovery)
         _LOGGER.info("Pre-started Syncleo device discovery with shared Zeroconf")
     except Exception as err:

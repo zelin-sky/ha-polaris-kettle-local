@@ -100,7 +100,7 @@ class PolarisDataUpdateCoordinator(DataUpdateCoordinator, IncomingMessageListene
             "weight": None,
         }
 
-        # Device info будет установлен после discovery
+        # Device info буде встановлено після discovery
         self.device_info = None
         self._discovery = SyncleoDiscovery.get_instance()
         self._unsub_discovery = None
@@ -128,7 +128,7 @@ class PolarisDataUpdateCoordinator(DataUpdateCoordinator, IncomingMessageListene
 
     async def async_setup(self, zeroconf_instance: Any = None, discovered_device_info: dict = None) -> None:
         """Set up the kettle connection."""
-        # Если уже настроено, не делаем ничего
+        # Якщо вже налаштовано, нічого не робимо
         if self._setup_complete:
             _LOGGER.debug("Kettle already setup, skipping")
             return
@@ -198,7 +198,7 @@ class PolarisDataUpdateCoordinator(DataUpdateCoordinator, IncomingMessageListene
         devtype = device_info.get('devtype', '00')
         firmware = device_info.get('firmware', '0.00')
 
-        # Получаем модель из POLARIS_DEVICE или используем базовый тип
+        # Отримуємо модель з POLARIS_DEVICE або використовуємо базовий тип
         try:
             model = POLARIS_DEVICE[int(devtype)]['model']
         except (KeyError, ValueError):
@@ -390,7 +390,7 @@ class PolarisDataUpdateCoordinator(DataUpdateCoordinator, IncomingMessageListene
             target_temp = self.data["target_temperature"]
             power_type = self.data["power_type"]
 
-            # Нагрев происходит когда устройство включено и текущая температура меньше целевой
+            # Нагрівання відбувається, коли пристрій увімкнено і поточна температура нижча за цільову
             if (power_type != PowerType.OFF and
                 current_temp is not None and
                 target_temp is not None and

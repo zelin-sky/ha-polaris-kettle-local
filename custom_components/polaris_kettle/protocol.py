@@ -63,11 +63,11 @@ def u8_to_s8(b: int) -> int:
 class PowerType(Enum):
     OFF = 0
     ON = 1
-    BOILKEEP = 2 # Кипячение с удержанием
-    WARMUP = 3 # Разогев
-    WARMUPKEEP = 4 # Разогрев с удержанием
-    IQBOIL = 5 # IQ кипячение
-    TEA = 6 # Чайная церемония
+    BOILKEEP = 2 # Кип'ятіння з утриманням
+    WARMUP = 3 # Розігрів
+    WARMUPKEEP = 4 # Розігрів з утриманням
+    IQBOIL = 5 # IQ кип'ятіння
+    TEA = 6 # Чайна церемонія
 
 
 # low-level protocol structures
@@ -78,7 +78,7 @@ class FrameType(Enum):
     CMD = 1
     AUX = 2
     NAK = 3
-    PING = 255  # Добавляем для обработки обратных пинг-пакетов
+    PING = 255  # Додаємо для обробки зворотних пінг-пакетів
 
 
 class FrameHead:
@@ -594,43 +594,43 @@ class ColorNightMessage(CmdOutgoingMessage, CmdIncomingMessage):
 
     def __init__(self, r: int = 0, g: int = 0, b: int = 0, w: int = 0, data_length: int = 4, seq: Optional[int] = None):
         super().__init__(seq)
-        self.r = r  # Красный (0-255)
-        self.g = g  # Зеленый (0-255) 
-        self.b = b  # Синий (0-255)
-        self.w = w  # Белый (0-255)
-        self.data_length = data_length  # Длина данных: 1, 2, 3 или 4 байта
+        self.r = r  # Червоний (0-255)
+        self.g = g  # Зелений (0-255) 
+        self.b = b  # Синій (0-255)
+        self.w = w  # Білий (0-255)
+        self.data_length = data_length  # Довжина даних: 1, 2, 3 або 4 байти
 
     @classmethod
     def from_packed_data(cls, data: bytes, seq=0) -> ColorNightMessage:
-        """Создает сообщение из данных переменной длины."""
+        """Створює повідомлення з даних змінної довжини."""
         data_length = len(data)
         
         if data_length == 1:
-            # 1 байт: только белый канал
+            # 1 байт: лише білий канал
             w = struct.unpack('<B', data)[0]
             return ColorNightMessage(w=w, data_length=1, seq=seq)
         elif data_length == 2:
-            # 2 байта: белый и красный
+            # 2 байти: білий і червоний
             w, r = struct.unpack('<BB', data)
             return ColorNightMessage(r=r, w=w, data_length=2, seq=seq)
         elif data_length == 3:
-            # 3 байта: RGB
+            # 3 байти: RGB
             r, g, b = struct.unpack('<BBB', data)
             return ColorNightMessage(r=r, g=g, b=b, data_length=3, seq=seq)
         elif data_length == 4:
-            # 4 байта: RGBW
+            # 4 байти: RGBW
             w, r, g, b = struct.unpack('<BBBB', data)
             return ColorNightMessage(r=r, g=g, b=b, w=w, data_length=4, seq=seq)
         else:
             raise ValueError(f"Invalid data length for ColorNightMessage: {data_length}")
 
     def pack_data(self) -> bytes:
-        """Упаковывает данные в соответствии с требуемой длиной."""
+        """Пакує дані відповідно до потрібної довжини."""
         if self.data_length == 1:
-            # Только белый канал
+            # Лише білий канал
             return struct.pack('<B', self.w)
         elif self.data_length == 2:
-            # Белый и красный
+            # Білий і червоний
             return struct.pack('<BB', self.w, self.r)
         elif self.data_length == 3:
             # RGB
@@ -654,7 +654,7 @@ class ColorNightMessage(CmdOutgoingMessage, CmdIncomingMessage):
         return fields
 
     def set_data_length(self, data_length: int):
-        """Устанавливает длину данных для отправки."""
+        """Встановлює довжину даних для надсилання."""
         if data_length not in (1, 2, 3, 4):
             raise ValueError("Data length must be 1, 2, 3, or 4")
         self.data_length = data_length
@@ -662,7 +662,7 @@ class ColorNightMessage(CmdOutgoingMessage, CmdIncomingMessage):
 class WeightMessage(CmdIncomingMessage):
     TYPE = 43
 
-    weight: int  # Вес в граммах
+    weight: int  # Вага в грамах
 
     def __init__(self, weight: int, seq: Optional[int] = None):
         super().__init__(seq)
@@ -670,18 +670,18 @@ class WeightMessage(CmdIncomingMessage):
 
     @classmethod
     def from_packed_data(cls, data: bytes, seq=0) -> WeightMessage:
-        """Создает сообщение из данных веса."""
+        """Створює повідомлення з даних ваги."""
         assert len(data) == 2, 'data size expected to be 2 bytes for weight'
         
-        # Первый байт - младший, второй - старший (little-endian)
+        # Перший байт - молодший, другий - старший (little-endian)
         low_byte, high_byte = struct.unpack('<BB', data)
         weight = low_byte + (high_byte << 8)
         
         return WeightMessage(weight, seq=seq)
 
     def pack_data(self) -> bytes:
-        """Упаковывает данные веса (только для исходящих сообщений, если нужно)."""
-        # Для сенсора веса обычно только прием, но на всякий случай реализуем
+        """Пакує дані ваги (лише для вихідних повідомлень, якщо потрібно)."""
+        # Для датчика ваги зазвичай лише приймання, але про всяк випадок реалізуємо
         low_byte = self.weight & 0xFF
         high_byte = (self.weight >> 8) & 0xFF
         return struct.pack('<BB', low_byte, high_byte)
@@ -1012,7 +1012,7 @@ class UDPConnection(threading.Thread, ConnectionStatusListener):
         max_consecutive_errors = 3
         
         while not self.interrupted:
-            # Пересоздаем сокет если он закрыт или произошла ошибка
+            # Перестворюємо сокет, якщо він закритий або сталася помилка
             if sock is None or sock.fileno() == -1:
                 if sock:
                     sock.close()
@@ -1020,7 +1020,7 @@ class UDPConnection(threading.Thread, ConnectionStatusListener):
                     sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
                     sock.bind(('0.0.0.0', self.source_port))
                     sock.settimeout(self.read_timeout)
-                    consecutive_errors = 0  # Сбрасываем счетчик ошибок при успешном создании сокета
+                    consecutive_errors = 0  # Скидаємо лічильник помилок після успішного створення сокета
                     self._logger.debug("Socket created and bound")
                 except Exception as exc:
                     self._logger.error(f"Failed to create socket: {exc}")
@@ -1129,7 +1129,7 @@ class UDPConnection(threading.Thread, ConnectionStatusListener):
             # receiving data
             try:
                 data, addr = sock.recvfrom(4096)
-                consecutive_errors = 0  # Сбрасываем счетчик ошибок при успешном приеме
+                consecutive_errors = 0  # Скидаємо лічильник помилок після успішного приймання
                 self._handle_incoming(data)
             except socket.timeout:
                 # Normal timeout, continue
@@ -1348,9 +1348,9 @@ class UDPConnection(threading.Thread, ConnectionStatusListener):
         """Async version to stop connection gracefully."""
         self.interrupted = True
         self._logger.info("Stopping UDP connection gracefully")
-        # Для асинхронного ожидания используем asyncio.sleep
-        # Но так как это поток, мы не можем использовать await здесь
-        # Оставляем синхронную версию для использования в executor
+        # Для асинхронного очікування використовуємо asyncio.sleep
+        # Але оскільки це потік, ми не можемо використовувати await тут
+        # Залишаємо синхронну версію для використання в executor
 
     def stop_connection(self):
         """Gracefully stop the connection."""
@@ -1359,7 +1359,7 @@ class UDPConnection(threading.Thread, ConnectionStatusListener):
             
         self.interrupted = True
         self._logger.info("Stopping UDP connection gracefully")
-        # Ждем завершения потока с таймаутом
+        # Чекаємо завершення потоку з таймаутом
         self.join(timeout=2.0)
         if self.is_alive():
             self._logger.warning("UDP connection thread did not stop gracefully, it will be terminated")

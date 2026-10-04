@@ -48,8 +48,8 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         # Start discovery if not already started
         await self.hass.async_add_executor_job(discovery.start_discovery)
         
-        # Даем время для обнаружения устройств
-        await asyncio.sleep(3.0)  # Увеличили задержку
+        # Даємо час на виявлення пристроїв
+        await asyncio.sleep(3.0)  # Збільшили затримку
         
         # Get current list of devices
         devices = await self.hass.async_add_executor_job(discovery.get_devices)
@@ -57,7 +57,7 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         # Prepare device list for dropdown
         self._device_options = {}
         for device in devices:
-            # Формируем понятное описание устройства
+            # Формуємо зрозумілий опис пристрою
             description = f"{device['devtype']}: {device['mac']}"
             if device['vendor'] != 'Unknown':
                 description += f" ({device['vendor']}"
@@ -169,14 +169,14 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         await self.async_set_unique_id(normalized_mac)
         self._abort_if_unique_id_configured()
         
-        # Извлекаем информацию об устройстве из свойств Zeroconf
+        # Отримуємо інформацію про пристрій з властивостей Zeroconf
         properties = discovery_info.properties
         vendor = "Unknown"
         basetype = "00"
         devtype = "00"
         
         if properties:
-            # Конвертируем свойства в строковый формат
+            # Конвертуємо властивості у рядковий формат
             str_properties = {}
             for key, value in properties.items():
                 try:
@@ -191,7 +191,7 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             basetype = str_properties.get('basetype', '00')
             devtype = str_properties.get('devtype', '00')
         
-        # Создаем понятное имя устройства
+        # Створюємо зрозумілу назву пристрою
         try:
             model = POLARIS_DEVICE[int(devtype)]['model']
         except (KeyError, ValueError):
@@ -199,7 +199,7 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         
         device_name = f"{vendor} {model}"
         
-        # Создаем контекст для отображения понятного имени
+        # Створюємо контекст для відображення зрозумілої назви
         self.context["title_placeholders"] = {
             "name": device_name,
             "mac": normalized_mac
@@ -235,14 +235,14 @@ async def validate_input(hass: HomeAssistant, data: dict[str, Any], discovered_d
     coordinator = PolarisDataUpdateCoordinator(hass, mac, device_token)
     
     try:
-        # Если у нас есть информация об устройстве из discovery, используем ее
+        # Якщо маємо інформацію про пристрій з discovery, використовуємо її
         discovered_device_info = None
         if discovered_devices and mac in discovered_devices:
             discovered_device_info = discovered_devices[mac]
             _LOGGER.info("Using discovered device info: %s", discovered_device_info)
         
         await coordinator.async_setup(zc, discovered_device_info)
-        await asyncio.sleep(1)  # Даем время на установку соединения
+        await asyncio.sleep(1)  # Даємо час на встановлення з'єднання
         await coordinator.shutdown()
     except Exception as err:
         _LOGGER.error("Validation failed: %s", err)

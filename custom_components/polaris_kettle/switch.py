@@ -22,7 +22,7 @@ async def async_setup_entry(
 ) -> None:
     """Set up Polaris Kettle switch platform from config entry."""
     coordinator: PolarisDataUpdateCoordinator = hass.data[DOMAIN][config_entry.entry_id]
-    # Добавляем только тем чайникам, у которых есть подсветка
+    # Додаємо лише тим чайникам, які мають підсвічування
     if coordinator.device_info['model_id'] in POLARIS_KETTLE_WITH_BACKLIGHT_TYPE:
         switches = [
             ChildLockSwitch(coordinator, config_entry.entry_id),

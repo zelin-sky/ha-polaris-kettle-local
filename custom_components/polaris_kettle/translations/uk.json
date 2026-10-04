@@ -1,0 +1,55 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "data": {
+          "mac": "MAC-адреса",
+          "device_token": "Токен пристрою"
+        },
+        "description": "Виберіть пристрій зі списку або введіть дані вручну",
+        "title": "Налаштування чайника Polaris"
+      }
+    },
+    "error": {
+      "cannot_connect": "Не вдалося підключитися до пристрою",
+      "invalid_input": "Невірний формат даних",
+      "unknown": "Невідома помилка"
+    },
+    "abort": {
+      "already_configured": "Пристрій уже налаштовано",
+      "invalid_discovery_info": "Невірні дані виявлення"
+    }
+  },
+  "entity": {
+    "switch": {
+      "child_lock": {
+        "name": "Блокування від дітей"
+      },
+      "volume": {
+        "name": "Звук"
+      },
+      "backlight": {
+        "name": "Підсвічування"
+      }
+    },
+    "water_heater": {
+      "polaris_kettle": {
+        "name": "Чайник",
+        "state": {
+          "off": "Вимкнено",
+          "heat": "Кип'ятіння",
+          "boil_keep": "Кип'ятіння з утриманням",
+          "warmup": "Розігрів",
+          "warmup_keep": "Розігрів з утриманням",
+          "iq_boil": "IQ Кип'ятіння",
+          "tea_ceremony": "Чайна церемонія"
+        }
+      }
+    },
+    "light": {
+      "night_light": {
+        "name": "Нічник"
+      }
+    }
+  }
+}

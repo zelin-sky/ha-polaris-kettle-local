@@ -29,11 +29,11 @@ async def async_setup_entry(
     """Set up Polaris Kettle sensor platform from config entry."""
     coordinator: PolarisDataUpdateCoordinator = hass.data[DOMAIN][config_entry.entry_id]
     
-    # Проверяем что device_info был создан
+    # Перевіряємо, що device_info створено
     if coordinator.device_info is None:
         _LOGGER.error("Device info not available, cannot create entity")
         return
-    # Добавляем только чайники с весом
+    # Додаємо лише чайники з вагою
     if coordinator.device_info['model_id'] in POLARIS_KETTLE_WITH_WEIGHT_TYPE:
         sensors = [
             CurrentTemperatureSensor(coordinator, config_entry.entry_id),
@@ -148,11 +148,11 @@ class DeviceHardwareSensor(SensorEntity):
     @property
     def native_value(self) -> str | None:
         """Return the hardware version as string."""
-        # Пробуем получить hardware из координатора
+        # Пробуємо отримати hardware з координатора
         hw_data = self.coordinator.data.get("device_hardware")
         if hw_data and isinstance(hw_data, list):
             return ".".join(map(str, hw_data))
-        # Или из локального кэша
+        # Або з локального кешу
         if self._hw_version:
             return ".".join(map(str, self._hw_version))
         return None

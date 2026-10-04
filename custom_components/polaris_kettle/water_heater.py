@@ -30,20 +30,20 @@ from .protocol import PowerType
 _LOGGER = logging.getLogger(__name__)
 _LOGGER.setLevel(logging.DEBUG)
 
-# Маппинг режимов PowerType на состояния water_heater
+# Мапінг режимів PowerType на стани water_heater
 POWER_TYPE_TO_OPERATION_MODE = {
     PowerType.OFF: "off",
-    PowerType.ON: "heat",  # Простой нагрев
-    PowerType.BOILKEEP: "boil_keep",  # Кипячение с удержанием
-    PowerType.WARMUP: "warmup",  # Разогрев
-    PowerType.WARMUPKEEP: "warmup_keep",  # Разогрев с удержанием
-    PowerType.IQBOIL: "iq_boil",  # IQ кипячение
-    PowerType.TEA: "tea_ceremony",  # Чайная церемония
+    PowerType.ON: "heat",  # Простий нагрів
+    PowerType.BOILKEEP: "boil_keep",  # Кип'ятіння з утриманням
+    PowerType.WARMUP: "warmup",  # Розігрів
+    PowerType.WARMUPKEEP: "warmup_keep",  # Розігрів з утриманням
+    PowerType.IQBOIL: "iq_boil",  # IQ кип'ятіння
+    PowerType.TEA: "tea_ceremony",  # Чайна церемонія
 }
 
 OPERATION_MODE_TO_POWER_TYPE = {v: k for k, v in POWER_TYPE_TO_OPERATION_MODE.items()}
 
-# Поддерживаемые режимы работы
+# Підтримувані режими роботи
 SUPPORTED_OPERATION_MODES = [
     mode for mode in POWER_TYPE_TO_OPERATION_MODE.values()
 ]
@@ -56,13 +56,13 @@ async def async_setup_entry(
     """Set up Polaris Kettle water_heater platform from config entry."""
     coordinator: PolarisDataUpdateCoordinator = hass.data[DOMAIN][config_entry.entry_id]
     
-    # Проверяем что device_info был создан
+    # Перевіряємо, що device_info створено
     if coordinator.device_info is None:
         _LOGGER.error("Device info not available, cannot create entity")
         return
     _LOGGER.debug("--INFO-- %s", coordinator.device_info) # {'identifiers': {('polaris_kettle', '485519efc4b1')}, 'name': 'Polaris PWK-1725CGLD 485519efc4b1', 'manufacturer': 'Polaris', 'model': 'PWK-1725CGLD', 'sw_version': '2.33', 'model_id': '86'}
 
-    # Добавляем только чайники
+    # Додаємо лише чайники
     if (coordinator.device_info['model_id'] in POLARIS_KETTLE_TYPE) or (coordinator.device_info['model_id'] in POLARIS_KETTLE_WITH_WEIGHT_TYPE):
         async_add_entities([PolarisKettleWaterHeater(coordinator, config_entry.entry_id)])
 
@@ -85,7 +85,7 @@ class PolarisKettleWaterHeater(WaterHeaterEntity):
             WaterHeaterEntityFeature.TARGET_TEMPERATURE |
             WaterHeaterEntityFeature.OPERATION_MODE
         )
-        # Режимы работы в зависимости от типа
+        # Режими роботи залежно від типу
         if (self.coordinator.device_info['model_id'] not in POLARIS_KETTLE_WITH_TEA_TIME_MODE_TYPE) and (self.coordinator.device_info['model_id'] not in POLARIS_KETTLE_WITH_KEEP_WITH_WARM_MODE_TYPE):
             self._attr_operation_list = [
                 mode for mode in POWER_TYPE_TO_OPERATION_MODE.values() if mode not in {"tea_ceremony", "boil_keep"}

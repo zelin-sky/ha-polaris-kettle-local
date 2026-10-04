@@ -82,7 +82,7 @@ class SyncleoDiscovery:
             return
 
         try:
-            # Если Zeroconf instance не установлен, создаем свой
+            # Якщо Zeroconf instance не встановлено, створюємо власний
             if self._zc is None:
                 _LOGGER.info("Creating internal Zeroconf instance for discovery")
                 self._zc = zeroconf.Zeroconf()
@@ -105,7 +105,7 @@ class SyncleoDiscovery:
             self._browser.cancel()
             self._browser = None
 
-        # Закрываем только если это наш собственный экземпляр
+        # Закриваємо лише якщо це наш власний екземпляр
         if self._zc and not self._is_shared_zeroconf:
             self._zc.close()
             self._zc = None

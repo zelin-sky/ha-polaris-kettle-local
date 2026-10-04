@@ -28,11 +28,11 @@ async def async_setup_entry(
     """Set up Polaris Kettle light platform from config entry."""
     coordinator: PolarisDataUpdateCoordinator = hass.data[DOMAIN][config_entry.entry_id]
     
-    # Проверяем что device_info был создан
+    # Перевіряємо, що device_info створено
     if coordinator.device_info is None:
         _LOGGER.error("Device info not available, cannot create entity")
         return
-    # Добавляем только чайники с ночником
+    # Додаємо лише чайники з нічником
     if coordinator.device_info['model_id'] in POLARIS_KETTLE_WITH_NIGHT_TYPE:
         async_add_entities([KettleNightLight(coordinator, config_entry.entry_id)])
 
@@ -52,12 +52,12 @@ class KettleNightLight(LightEntity):
         # Light attributes
         self._attr_supported_color_modes = {ColorMode.RGB}
         self._attr_color_mode = ColorMode.RGB
-        self._attr_brightness = 255  # Яркость в диапазоне 0-255
+        self._attr_brightness = 255  # Яскравість у діапазоні 0-255
         self._attr_effect_list = None  # No effects
         self._attr_effect = None
         
-        # Храним базовый цвет без учета яркости
-        self._base_rgb_color = (255, 255, 255)  # Белый по умолчанию
+        # Зберігаємо базовий колір без урахування яскравості
+        self._base_rgb_color = (255, 255, 255)  # Білий за замовчуванням
         self._data_length = 4
 
     @property
@@ -79,10 +79,10 @@ class KettleNightLight(LightEntity):
         b = color_data.get("b", 255)
         self._data_length = color_data.get("data_length", 4)
         
-        # Сохраняем базовый цвет (то, что пришло от устройства)
+        # Зберігаємо базовий колір (те, що надійшло від пристрою)
         self._base_rgb_color = (r, g, b)
         
-        # Применяем яркость к цвету для отображения в HA
+        # Застосовуємо яскравість до кольору для відображення в HA
         brightness_factor = self.brightness / 255.0
         return (
             int(r * brightness_factor),
@@ -110,7 +110,7 @@ class KettleNightLight(LightEntity):
             self._attr_brightness = new_brightness
             _LOGGER.debug("Setting brightness to: %s", new_brightness)
             
-            # При изменении яркости пересчитываем цвет для устройства
+            # При зміні яскравості перераховуємо колір для пристрою
             if self._base_rgb_color and new_brightness < 255:
                 r, g, b = self._base_rgb_color
                 brightness_factor = new_brightness / 255.0
@@ -125,22 +125,22 @@ class KettleNightLight(LightEntity):
         if ATTR_RGB_COLOR in kwargs:
             rgb_color = kwargs[ATTR_RGB_COLOR]
             
-            # При выборе цвета в HA, он уже учитывает текущую яркость
-            # Поэтому нам нужно преобразовать его обратно в "полную яркость"
+            # При виборі кольору в HA він уже враховує поточну яскравість
+            # Тому нам потрібно перетворити його назад у "повну яскравість"
             r, g, b = rgb_color
             
             if self.brightness < 255:
-                # Цвет пришел с уже примененной яркостью, преобразуем обратно
+                # Колір надійшов із уже застосованою яскравістю, перетворюємо назад
                 brightness_factor = self.brightness / 255.0
                 r_full = min(255, int(r / brightness_factor)) if brightness_factor > 0 else 0
                 g_full = min(255, int(g / brightness_factor)) if brightness_factor > 0 else 0
                 b_full = min(255, int(b / brightness_factor)) if brightness_factor > 0 else 0
                 
-                # Сохраняем базовый цвет (то, что отправляем на устройство)
+                # Зберігаємо базовий колір (те, що надсилаємо на пристрій)
                 self._base_rgb_color = (r_full, g_full, b_full)
                 await self.coordinator.async_set_color_night(r_full, g_full, b_full, 0, self._data_length)
             else:
-                # При 100% яркости просто используем полученный цвет
+                # При 100% яскравості просто використовуємо отриманий колір
                 self._base_rgb_color = (r, g, b)
                 await self.coordinator.async_set_color_night(r, g, b, 0, self._data_length)
                 

@@ -61,7 +61,7 @@ class DeviceDiscover(threading.Thread, zeroconf.ServiceListener):
             self._logger.warning(f'add_listener: listener {listener} already in the listeners list')
 
     def set_info(self, info: zeroconf.ServiceInfo, notify: bool = True):
-        # Проверяем что properties не пустые
+        # Перевіряємо, що properties не порожні
         if not info.properties:
             self._logger.debug("set_info: ignoring service info with empty properties")
             return
@@ -72,7 +72,7 @@ class DeviceDiscover(threading.Thread, zeroconf.ServiceListener):
         self._valid_addresses = valid_addresses
         self.si = info
         
-        # Добавляем отладочное логирование
+        # Додаємо налагоджувальне логування
         self._logger.debug(f"set_info: received service info with properties: {info.properties}")
         if info.properties:
             for key, value in info.properties.items():
@@ -101,7 +101,7 @@ class DeviceDiscover(threading.Thread, zeroconf.ServiceListener):
         if name.startswith(f'{self._mac}.'):
             self._logger.info(f'{method}: type={type_} name={name}')
             
-            # Игнорируем уведомления с пустыми свойствами
+            # Ігноруємо сповіщення з порожніми властивостями
             if not info.properties:
                 self._logger.debug(f'{method}: ignoring due to empty properties')
                 return
@@ -166,10 +166,10 @@ class DeviceDiscover(threading.Thread, zeroconf.ServiceListener):
         if not self.si or not self.si.properties:
             raise ValueError("No properties available")
         
-        # Пробуем получить как bytes, если не получается - как строку
+        # Пробуємо отримати як bytes, якщо не виходить - як рядок
         pubkey_hex = self.si.properties.get(b'public')
         if pubkey_hex is None:
-            # Пробуем получить как строку (если свойства уже декодированы)
+            # Пробуємо отримати як рядок (якщо властивості вже декодовано)
             pubkey_hex_str = None
             for key, value in self.si.properties.items():
                 key_str = key.decode('utf-8') if isinstance(key, bytes) else str(key)
@@ -196,10 +196,10 @@ class DeviceDiscover(threading.Thread, zeroconf.ServiceListener):
         if not self.si or not self.si.properties:
             raise ValueError("No properties available")
         
-        # Пробуем получить как bytes, если не получается - как строку
+        # Пробуємо отримати як bytes, якщо не виходить - як рядок
         curve_str = self.si.properties.get(b'curve')
         if curve_str is None:
-            # Пробуем получить как строку (если свойства уже декодированы)
+            # Пробуємо отримати як рядок (якщо властивості вже декодовано)
             curve_str_val = None
             for key, value in self.si.properties.items():
                 key_str = key.decode('utf-8') if isinstance(key, bytes) else str(key)
@@ -234,10 +234,10 @@ class DeviceDiscover(threading.Thread, zeroconf.ServiceListener):
         if not self.si or not self.si.properties:
             raise ValueError("No properties available")
         
-        # Пробуем получить как bytes, если не получается - как строку
+        # Пробуємо отримати як bytes, якщо не виходить - як рядок
         protocol_str = self.si.properties.get(b'protocol')
         if protocol_str is None:
-            # Пробуем получить как строку (если свойства уже декодированы)
+            # Пробуємо отримати як рядок (якщо властивості вже декодовано)
             protocol_str_val = None
             for key, value in self.si.properties.items():
                 key_str = key.decode('utf-8') if isinstance(key, bytes) else str(key)
@@ -303,7 +303,7 @@ class Kettle(DeviceListener, ConnectionStatusListener):
         self.conn_status = None
         self._read_timeout = read_timeout
         self._find_evt = threading.Event()
-        self._logger = logging.getLogger(f'{__name__}.{self.__class__.__name__}[{mac}]')  # Добавляем MAC в логгер
+        self._logger = logging.getLogger(f'{__name__}.{self.__class__.__name__}[{mac}]')  # Додаємо MAC до логера
 
     # ------------------------------------------------------------------
     # Device info (address / port / public key) and connection management
@@ -317,7 +317,7 @@ class Kettle(DeviceListener, ConnectionStatusListener):
             try:
                 addresses.append(socket.inet_pton(socket.AF_INET, ip))
             except OSError:
-                # Пропускаем невалидные адреса
+                # Пропускаємо невалідні адреси
                 continue
 
         # properties as bytes, as zeroconf expects
@@ -386,7 +386,7 @@ class Kettle(DeviceListener, ConnectionStatusListener):
     def start_server_if_needed(self,
                                incoming_message_listener=None,
                                connection_status_listener=None) -> bool:
-        # Проверяем что device инициализирован
+        # Перевіряємо, що device ініціалізовано
         if not self.device:
             self._logger.error("Device not initialized, cannot start server")
             return False
@@ -395,19 +395,19 @@ class Kettle(DeviceListener, ConnectionStatusListener):
             self._logger.error("Device service info not available, cannot start server")
             return False
 
-        # Если соединение существует, но поток не живой - пересоздаем
+        # Якщо з'єднання існує, але потік не живий - створюємо заново
         if self.conn and not self.conn.is_alive():
             self._logger.info("Connection thread is dead, recreating...")
             self.conn = None
 
         if self.conn:
             self._logger.warning('start_server_if_needed: server is already started!')
-            # Обновляем параметры существующего соединения
+            # Оновлюємо параметри наявного з'єднання
             self.conn.set_address(self.device.addr, self.device.port)
             self.conn.set_device_pubkey(self.device.pubkey)
             return True
 
-        # Проверяем что device имеет все необходимые свойства
+        # Перевіряємо, що device має всі необхідні властивості
         try:
             curve = self.device.curve
             protocol = self.device.protocol
@@ -426,7 +426,7 @@ class Kettle(DeviceListener, ConnectionStatusListener):
         if self._read_timeout is not None:
             kw['read_timeout'] = self._read_timeout
 
-        # Создаем новое соединение
+        # Створюємо нове з'єднання
         conn = UDPConnection(addr=self.device.addr,
                              port=self.device.port,
                              device_pubkey=pubkey,
