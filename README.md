@@ -2,12 +2,6 @@
 
 Локальна інтеграція чайників Polaris IQ Home для Home Assistant (UDP, без хмари).
 
-> Це форк [samoswall/polaris-local](https://github.com/samoswall/polaris-local) (BSD-3-Clause) з окремим доменом `polaris_kettle`. Протокол і початкова реалізація належать автору оригіналу.
->
-> **Зміни відносно оригіналу:** автоматичне відновлення з'єднання після вимкнення живлення чайника (нова адреса/порт/ключ у mDNS), старт при вимкненому чайнику, окремий домен `polaris_kettle`.
->
-> **Міграція з `syncleo_kettle`:** видаліть стару інтеграцію (запис і папку `custom_components/syncleo_kettle`), перезапустіть HA, потім додайте `Polaris Kettle`. Дві інтеграції одночасно не запускайте: вони конкурують за той самий чайник.
-
 
 Інтеграція пристроїв Polaris IQ Home у Home Assistant за допомогою протоколу UDP
 
@@ -78,3 +72,12 @@ You will get text in the following format:
 `polaris://device-share/polaris/70/aabbccddeeff?token=111222333444555666777888999000ab&name=PUH-9105&attributes_appearance=9105`
 
 The Polaris device token is the value of the `token` parameter. In this example, it is `111222333444555666777888999000ab` (32 characters).
+
+
+
+
+> Це форк [samoswall/polaris-local](https://github.com/samoswall/polaris-local) (BSD-3-Clause) з окремим доменом `polaris_kettle`. Протокол і початкова реалізація належать автору оригіналу.
+>
+> **Зміни відносно оригіналу:** автоматичне відновлення з'єднання після вимкнення живлення чайника (нова адреса/порт/ключ у mDNS), старт при вимкненому чайнику, окремий домен `polaris_kettle`.
+>
+> **Міграція з `syncleo_kettle`:** видаліть стару інтеграцію (запис і папку `custom_components/syncleo_kettle`), перезапустіть HA, потім додайте `Polaris Kettle`. Дві інтеграції одночасно не запускайте: вони конкурують за той самий чайник.

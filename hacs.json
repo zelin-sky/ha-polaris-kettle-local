@@ -1,5 +1,5 @@
 {
-    "name": "Polaris Kettle",
+    "name": "Polaris Kettle Local",
     "render_readme": true,
     "country": ["AE", "DE", "KZ", "RU", "US", "UA"],
     "homeassistant": "2024.1.6"
