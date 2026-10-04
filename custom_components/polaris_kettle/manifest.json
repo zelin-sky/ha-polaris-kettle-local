@@ -1,7 +1,7 @@
 {
   "domain": "polaris_kettle",
   "name": "Polaris Kettle",
-  "codeowners": [zelin-sky],
+  "codeowners": ["zelin-sky"],
   "config_flow": true,
   "dependencies": ["zeroconf"],
   "documentation": "https://github.com/zelin-sky/ha-polaris-kettle-local",
